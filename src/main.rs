@@ -64,7 +64,7 @@ impl CsvProcessor {
 
         for (row_index, result) in csv_reader.records().enumerate() {
             let record = result
-                .with_context(|| format!("Failed to read row {}", row_index))?;
+                .with_context(|| format!("Failed to read row {row_index}"))?;
             
             let row_data = match &headers {
                 Some(h) => create_named_context(h, &record),
@@ -74,10 +74,10 @@ impl CsvProcessor {
             let template = self.env.template_from_str(&self.template_str)
                 .with_context(|| "Failed to parse template")?;
             let rendered = template.render(context! { row => row_data })
-                .with_context(|| format!("Failed to render template for row {}", row_index))?;
+                .with_context(|| format!("Failed to render template for row {row_index}"))?;
 
             execute_command(&rendered, row_index)
-                .with_context(|| format!("Failed to execute command for row {}", row_index))?;
+                .with_context(|| format!("Failed to execute command for row {row_index}"))?;
         }
 
         Ok(())
@@ -95,7 +95,7 @@ fn main() -> Result<()> {
     
     for file_path in &args.files {
         processor.process_file(file_path)
-            .with_context(|| format!("Failed to process file: {}", file_path))?;
+            .with_context(|| format!("Failed to process file: {file_path}"))?;
     }
 
     Ok(())
@@ -119,7 +119,7 @@ fn create_indexed_context(record: &csv::StringRecord) -> HashMap<String, Value> 
 }
 
 fn execute_command(command: &str, row_index: usize) -> Result<()> {
-    println!("Executing for row {}: {}", row_index, command);
+    println!("Executing for row {row_index}: {command}");
     
     let output = if cfg!(target_os = "windows") {
         Command::new("cmd")
@@ -139,7 +139,7 @@ fn execute_command(command: &str, row_index: usize) -> Result<()> {
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     if !stdout.trim().is_empty() {
-        println!("{}", stdout);
+        println!("{stdout}");
     }
 
     Ok(())
