@@ -11,6 +11,7 @@ use std::process::Command;
 
 #[derive(Parser)]
 #[command(name = "csvargs")]
+#[command(version)]
 #[command(about = "Process CSV files with Jinja2 templates and execute commands")]
 pub struct Args {
     #[arg(value_name = "TEMPLATE", help = "Jinja2 template string")]
